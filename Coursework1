@@ -1,0 +1,205 @@
+# Name: Christopher Denison
+# Student ID: DEN19703674
+
+import sympy as sp, numpy as np, seaborn as sns, scipy.stats as stats, numpy.polynomial.polynomial as poly
+import matplotlib.pyplot as plt, matplotlib.cm as cm
+import matplotlib
+from numpy.polynomial import Polynomial as P
+from sympy import factor, sqrt, exp
+from mpl_toolkits import mplot3d
+from scipy.stats import binom, poisson, norm
+from scipy.optimize import curve_fit
+
+# For this program to run, un-comment out the # QuestionN where N = number of question
+
+
+def Question1():
+    def f(x):
+        return a*x**5 + b*x**4 + c*x**3 + d*x**2 + e*x + h   # Here I define the function to be solved in the form ax^n + bx + c
+
+    x = sp.Symbol("x")                                        # Defining x as a symbol
+    poly_list = ["Factorise", "Find roots"]                   # Polynomial list to be chosen by the user
+
+    print("Polynomial Solver")
+
+    a = float(input("Enter coefficient of x^5: "))  # The imputs for coefficients
+    b = float(input("Enter coefficient of x^4: "))
+    c = float(input("Enter coefficient of x^3: "))
+    d = float(input("Enter coefficient of x^2: "))
+    e = float(input("Enter coefficient of x: "))
+    h = float(input("Enter constant, C: "))
+
+    print(f(x))
+
+    i = 0
+    p = P([h, e, d, c, b, a])   # Declaring a, b and c in the form of a polynomial
+
+    while i < len(poly_list):   # Prints the choice of factorising / finding roots
+
+        print(i + 1, ") ", poly_list[i])
+        i += 1
+
+    poly_choice = int(input("What would you like to do with this polynomial? ")) - 1  
+
+    if poly_choice == 0:   # The "if loop" to factorise the function
+        g = factor(f(x))
+        print(g)
+
+    elif poly_choice == 1: # Finds the roots of the polynomial
+        p.roots()           
+        print(np.around([p.roots()],decimals = 2))
+
+    print("Thank you for using this Polynomial Solver.")
+
+#Question1()
+
+def Question2():
+
+    x, y, a = sp.symbols("x y a") # Here, I define x, y and a as algebraic symbols to be used in functions
+    f = 8*sp.cos(3*x)             # Defining the expressions as functions to be used
+    f1 = y**2*sp.cos(a*y)
+    g = x**2*sp.sin(x)
+    g1 = x**2*sp.sin(a)
+    g2 = sp.sin(sp.log(x))
+
+    f = sp.diff(f,x)
+
+    for i in range(0,5): # Here I used a for loop to differentiate the function 5 times (find the 5th derivative)
+
+        f1 = sp.diff(f1,y)
+        i += 1 # This will add a value to i each time up to the maximum range of 5 
+
+    g = sp.integrate(g, x) # Used the sympy function to integrate g with respect to x
+    g1 = sp.integrate(g1, (x,1,3), (a,0,np.pi)) # For this integral I can combine both integrals which reduces no. of line
+    # Integrating g1 with respect to x, in range 1-3 and g1 with respect to a, in range 0-pi
+    g2 = sp.integrate(g2, x)
+
+    print("Derivatives Questions: ")
+    print("1)", f)
+    print("2)", f1)
+    print("Integral Questions: ")
+    print("1)", g)
+    print("2)", g1)
+    print("3)", g2)
+
+#Question2()
+
+def Question3():
+
+    t = np.linspace(0, 2*np.pi, num =200)                       # defines the t-range
+    x = np.sqrt(2) * np.cos(t) / (np.sin(t)**2 + 1)
+    y = np.sqrt(2) * np.cos(t) * np.sin(t) / (np.sin(t)**2 + 1) # Here are the x and y coordinates for the function
+
+    fig = plt.figure()                            # Defines the figure to be plotted
+    fig.suptitle("Parametric Plot of Lemniscate") # labeling the first plot
+    plt.plot(x, y)                                # Plots the graph with respect to x and y
+    plt.show()                                    # Prints the plot
+
+    # error shows that in order to plot on a real axis, the imaginary parts must be discarded
+    # Please close first window before second window opens
+
+    r = np.lib.scimath.sqrt(2 * np.cos(2 * t))      # Defines the r ordinate 
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection = 'polar') # Changes the plot from cartesian to polar
+    ax.plot(t, r)                                   # Plots the line t against r
+    fig.suptitle("Polar Plot of Lemniscate")        # Labeling the second plot
+    plt.show()
+    # The results show a very similar plot, but with the axes being slightly different the first plot is more stretched in the y-axis
+
+#Question3()
+
+def Question4():
+
+    def f(x,y):
+        return y * np.sin(X) - (x * np.cos(Y)) # Defines the function with respect to x, X, y and Y
+
+    delta = 0.1                        # Defines the step size
+    x = np.arange(-5.0,5.0, delta)     # Returns values between -5 and 5 with step size defined above as an array
+    y = np.arange(-5.0,5.0, delta)     # Same as above
+    X,Y = np.meshgrid(x,y)             # Defines X, Y as the combination of vectors x and y to create a grid
+    Z = f(X,Y)                         # Defines Z as a function of X and Y
+
+    ax = plt.axes(projection='3d')                                # This defines the plots
+    CS = ax.contour3D(X, Y, Z, 200, cmap=plt.get_cmap('viridis')) # This instruction gives the line of the contour. 
+    ax.clabel(CS, inline=1, fontsize=10)                          # Adds labels to 3D contour plots
+    ax.set(xlabel='x',ylabel='y',zlabel='z')                      # Labeling the x,y,z axes
+    ax.set_title('3D Contour plot')                               # Setting title of the 3D contour
+    ax.view_init(60,70)                                           # Changes the viewpoint of the contour plot
+    plt.show()
+
+    cp = plt.contourf(X, Y, Z)                         # Plots 2D contour plot for X, Y and Z
+    cp.ax.set_title('2D representation of 3D contour') # Adds title to plot
+    plt.colorbar(cp, label = "Height of z values")     # Adds a colorbar to plot to show density
+    plt.show()
+
+    # The 3D contour plot shows the function Z, while the step size decrease adds more lines to the plot, showing smoother curves but a longer time to compute
+
+#Question4()
+
+def Question5():
+
+    k=2        # Minimum number of computers to be defective
+    n=300      # Number of points
+    p=0.003    # Probability of defective computers, 0.3%
+    size=350   # Sample size
+
+    # Binomial Distribution
+    data_binom = binom.rvs(n=1000,p=0.003,size=350)     # Converting data to binomial distribution
+    ax = sns.distplot(data_binom, fit_kws={"color":"red"}, kde=False, fit=stats.gamma)  # Adds best-fit line to graph
+    ax.set(xlabel='Binomial Distribution', ylabel='Frequency')    # Labeling graph axes
+
+    prob = stats.binom.cdf(k,size,p)     # Absolute probability of defective computers based on binomial distribution
+
+    print("The Binomial distribution gives a probability of: ",prob)
+    plt.show()
+
+    # Poisson Distribution
+    mu=350 * 0.003    # Mean value for poisson distribution
+    bins=25           # Number of data bins
+
+    data_poisson = poisson.rvs(mu=350 * 0.003, size=350)     # Converts data to poisson distribution
+    ax = sns.distplot(data_poisson,bins=25,fit_kws={"color":"red"},kde=False,color='skyblue',fit=norm)   # Adds best-fit line
+    ax.set(xlabel='Poisson Distribution', ylabel='Frequency')    # Labeling graph
+
+    pois_prob = stats.poisson.cdf(k, mu)    # Absolute probability of defective computers based on poisson distribution
+    print("The Poisson distribution gives a probability of: ",pois_prob)
+
+    # The results obtained are similar within 1/10000 parts which shows the probability is likely displaying a normal distribution. The probability of more than 2 computers being defective in the sample is 91%
+
+#Question5()
+
+def Question6():
+
+    a = np.pi/3 # This is the theta value given in the question
+    R = np.matrix([[np.cos(a), -1*np.sin(a)],
+          [np.sin(a), np.cos(a)]]) # Matrix R can be written using sympy and symbol "a" but makes it difficult to find the determinant. I chose to use values and numpy instead
+    M = np.matrix([[1],[4]]) # Matrix M is the coordinates given in the question
+    x = R.transpose() # This is the transpose function for matrix R
+
+    print("The matrix R is given as follows: ")
+    print(np.round((R), decimals = 3)) # I used the numpy round feature in order to reduce the number of decimals to an acceptable level
+    print("The transpose of matrix R is given as follows: ")
+    print(np.round((x), decimals = 3))
+
+    trace = R.trace() # I used numpy libraries for matrices in order to calculate the trace, determinant and the inverse
+    trace_x = x.trace() # x.trace() finds the trace for matrix x
+
+    print("1a) ", trace)
+    print("1b) ", trace_x)
+    # Results are the same for the trace of each matrix, as the leading diagonal elements are identical
+
+    det = np.linalg.det(R)
+    det_x = np.linalg.det(x)
+
+    print("2a) ", det)
+    print("2b) ", det_x)
+    # The determinent of R and RT are the same, as the det. of a square matrix is the same as its transposed
+
+    inv = np.linalg.inv(R)
+
+    print("3) ", np.round((inv), decimals = 3)) # The inverse of R is the same as the transposed form of R, since elements along leading diagonal are identical
+    print("The rotation of point (1,4) through angle pi/3 gives point: ")
+    print(np.round((R*M), decimals = 3)) # Rotating the point is done through multiplying the matrix R and the point (1,4)
+
+#Question6()
