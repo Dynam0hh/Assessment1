@@ -1,6 +1,3 @@
-# Name: Christopher Denison
-# Student ID: DEN19703674
-
 import sympy as sp, numpy as np, seaborn as sns, scipy.stats as stats, numpy.polynomial.polynomial as poly
 import matplotlib.pyplot as plt, matplotlib.cm as cm
 import matplotlib
